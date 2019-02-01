@@ -2,19 +2,21 @@ package com.github.rodoufu.currencyvalues;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.rodoufu.currencyvalues.bean.CryptoTicker;
 import com.github.rodoufu.currencyvalues.bean.FiatTicker;
 
+/**
+ * Get ticker data for Crypto and Fiat currencies.
+ */
 @Component
 public class TickerData {
 	@Value("${ticker.url.crypto}")
@@ -25,22 +27,24 @@ public class TickerData {
 	@Autowired
     private RestTemplate restTemplate;
 
+    /**
+     * Get the data asynchronously.
+     * @return The Crypto Ticker information.
+     * @throws URISyntaxException Malformed URL.
+     */
 	@Async
-	public Future<CryptoTicker> getCryptoTicker() throws RestClientException, URISyntaxException, InterruptedException {
-		for (int i = 0; i < 10; ++i) {
-			System.out.println("CryptoTicker");
-			Thread.sleep(100);
-		}
-		return new AsyncResult<CryptoTicker>(restTemplate.getForObject(new URI(cryptoTickerUrl), CryptoTicker.class));
+	public CompletableFuture<CryptoTicker> getCryptoTicker() throws URISyntaxException {
+		return CompletableFuture.completedFuture(restTemplate.getForObject(new URI(cryptoTickerUrl), CryptoTicker.class));
 	}
-	
+
+    /**
+     * Get the data asynchronously.
+     * @return The Fiat Ticker information.
+     * @throws URISyntaxException Malformed URL.
+     */
 	@Async
-	public Future<FiatTicker> getFiatTicker() throws RestClientException, URISyntaxException, InterruptedException {
-		for (int i = 0; i < 10; ++i) {
-			System.out.println("FiatTicker");
-			Thread.sleep(100);
-		}
-		return new AsyncResult<FiatTicker>(restTemplate.getForObject(new URI(fiatTickerUrl), FiatTicker.class));
+	public CompletableFuture<FiatTicker> getFiatTicker() throws URISyntaxException {
+		return CompletableFuture.completedFuture(restTemplate.getForObject(new URI(fiatTickerUrl), FiatTicker.class));
 	}
 
 }
