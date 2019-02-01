@@ -6,13 +6,20 @@ import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+/**
+ * Bitcoin price in a specific currency at a specific time.
+ */
 @Entity
 public class BitcoinPrice {
+    /** Id. */
     @Id
     @GeneratedValue
     private Long id;
+    /** Currency 3 char code. */
     private String currencyCode;
+    /** The actual price. */
     private BigDecimal value;
+    /** Date of the quotation. */
     private Calendar date;
 
     public BitcoinPrice() {
