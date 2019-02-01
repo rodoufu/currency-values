@@ -24,49 +24,56 @@ import java.util.stream.Collectors;
  */
 @Component
 public class BitcoinPriceJob {
-    @Autowired
-    private BitcoinPriceDAO bitcoinPriceDAO;
-    @Autowired
-    private TickerData getDataJob;
+	@Autowired
+	private BitcoinPriceDAO bitcoinPriceDAO;
+	@Autowired
+	private TickerData tickerData;
+	
+	/**
+	 * Job to calculate the bitcoin prices and save the data.
+	 * @throws RestClientException Problem reaching the REST service.
+	 * @throws URISyntaxException Malformed URL.
+	 * @throws InterruptedException Problem interrupting the thread.
+	 * @throws ExecutionException Problem obtaining the values from the futures.
+	 */
+	@Scheduled(fixedDelayString = "${bitcoin.price.job.interval}")
+	public void scheduleFetchAndSaveBitcoinPrice() throws RestClientException, URISyntaxException, InterruptedException, ExecutionException {
+		final CompletableFuture<FiatTicker> fiatTickerFuture = getTickerData().getFiatTicker();
+		final CompletableFuture<CryptoTicker> cryptoTickerFuture = getTickerData().getCryptoTicker();
 
-    /**
-     * Job to calculate the bitcoin prices and save the data.
-     * @throws RestClientException Problem reaching the REST service.
-     * @throws URISyntaxException Malformed URL.
-     * @throws InterruptedException Problem interrupting the thread.
-     * @throws ExecutionException Problem obtaining the values from the futures.
-     */
-    @Scheduled(fixedDelayString = "${bitcoin.price.job.interval}")
-    public void scheduleFixedRateTask() throws RestClientException, URISyntaxException, InterruptedException, ExecutionException {
-        final CompletableFuture<FiatTicker> fiatTickerFuture = getDataJob.getFiatTicker();
-        final CompletableFuture<CryptoTicker> cryptoTickerFuture = getDataJob.getCryptoTicker();
+		CompletableFuture.allOf(fiatTickerFuture, cryptoTickerFuture).join();
 
-        CompletableFuture.allOf(fiatTickerFuture, cryptoTickerFuture).join();
+		saveBitcoinPrice(calculateBitcoinPrice(cryptoTickerFuture.get(), fiatTickerFuture.get()));
+	}
 
-        saveBitcoinPrice(calculateBitcoinPrice(cryptoTickerFuture.get(), fiatTickerFuture.get()));
-    }
+	/**
+	 * Generate a list of biticoin prices for a crypto and fiat tickers.
+	 * @param cryptoTicker Crypto ticker.
+	 * @param fiatTicker Fiat ticker.
+	 * @return The list.
+	 */
+	public List<BitcoinPrice> calculateBitcoinPrice(CryptoTicker cryptoTicker, FiatTicker fiatTicker) {
+		final Calendar dateNow = Calendar.getInstance();
+		final BigDecimal buyValue = cryptoTicker.getBuy();
+		return fiatTicker.getRates().entrySet().stream().map(entry -> new BitcoinPrice(entry.getKey(), buyValue.multiply(entry.getValue()), dateNow))
+				.collect(Collectors.toList());
+	}
 
-    /**
-     * Generate a list of biticoin prices for a crypto and fiat tickers.
-     * @param cryptoTicker Crypto ticker.
-     * @param fiatTicker Fiat ticker.
-     * @return The list.
-     */
-    public List<BitcoinPrice> calculateBitcoinPrice(CryptoTicker cryptoTicker, FiatTicker fiatTicker) {
-        final Calendar dateNow = Calendar.getInstance();
-        final BigDecimal buyValue = cryptoTicker.getBuy();
-        return fiatTicker.getRates().entrySet().stream()
-                .map(entry -> new BitcoinPrice(entry.getKey(), buyValue.multiply(entry.getValue()), dateNow))
-                .collect(Collectors.toList());
-    }
+	/**
+	 * Saves the bitcoin prices in the database.
+	 * @param bitcoinPrices Bitcoin prices.
+	 */
+	@Transactional
+	public void saveBitcoinPrice(List<BitcoinPrice> bitcoinPrices) {
+		bitcoinPrices.forEach(bitcoinPrice -> getBitcoinPriceDAO().save(bitcoinPrice));
+	}
 
-    /**
-     * Saves the bitcoin prices in the database.
-     * @param bitcoinPrices Bitcoin prices.
-     */
-    @Transactional
-    public void saveBitcoinPrice(List<BitcoinPrice> bitcoinPrices) {
-        bitcoinPrices.forEach(bitcoinPrice -> bitcoinPriceDAO.save(bitcoinPrice));
-    }
+	public TickerData getTickerData() {
+		return tickerData;
+	}
+	
+	public BitcoinPriceDAO getBitcoinPriceDAO() {
+		return bitcoinPriceDAO;
+	}
 
 }
