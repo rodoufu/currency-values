@@ -11,6 +11,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+/**
+ * Application configuration.
+ */
 @Configuration
 @EnableAsync
 public class ApplicationConfig implements SchedulingConfigurer {
@@ -27,7 +30,11 @@ public class ApplicationConfig implements SchedulingConfigurer {
 	private Integer asyncExecutorPoolQueueCapacity;
 	@Value("${async.executor.thread.prefix}")
 	private String asyncExecutorThreadPrefix;
-	
+
+	/**
+	 * Configure the scheduled task thread pool.
+	 * @param scheduledTaskRegistrar The ScheduledTaskRegistrar.
+	 */
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
 		final ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
@@ -37,6 +44,10 @@ public class ApplicationConfig implements SchedulingConfigurer {
 		scheduledTaskRegistrar.setTaskScheduler(threadPoolTaskScheduler);
 	}
 
+	/**
+	 * Configures the async task thread pool.
+	 * @return The Executor.
+	 */
 	@Bean(name = "asyncExecutor")
 	public Executor asyncExecutor() {
 		final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
