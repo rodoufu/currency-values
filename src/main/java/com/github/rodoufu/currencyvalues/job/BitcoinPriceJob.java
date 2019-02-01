@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -24,11 +25,15 @@ import java.util.stream.Collectors;
  */
 @Component
 public class BitcoinPriceJob {
-	@Autowired
 	private BitcoinPriceDAO bitcoinPriceDAO;
-	@Autowired
 	private TickerData tickerData;
-	
+
+	@Autowired
+	public BitcoinPriceJob(BitcoinPriceDAO bitcoinPriceDAO, TickerData tickerData) {
+		this.bitcoinPriceDAO = bitcoinPriceDAO;
+		this.tickerData = tickerData;
+	}
+
 	/**
 	 * Job to calculate the bitcoin prices and save the data.
 	 * @throws RestClientException Problem reaching the REST service.
@@ -64,7 +69,7 @@ public class BitcoinPriceJob {
 	 * @param bitcoinPrices Bitcoin prices.
 	 */
 	@Transactional
-	public void saveBitcoinPrice(List<BitcoinPrice> bitcoinPrices) {
+	public void saveBitcoinPrice(Collection<BitcoinPrice> bitcoinPrices) {
 		bitcoinPrices.forEach(bitcoinPrice -> getBitcoinPriceDAO().save(bitcoinPrice));
 	}
 
