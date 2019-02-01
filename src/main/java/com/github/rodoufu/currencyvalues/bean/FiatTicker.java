@@ -13,6 +13,11 @@ import java.util.Map;
 public class FiatTicker {
 	private String base;
 	private Calendar date;
+	/**
+	 * The purpose of this java bean is to handle the data from the rest service.
+	 * In a business logic object usually it is better to use method like addRate, removeRate, clearRates
+	 * rather than exposing the 'rates' map. 
+	 */
 	private Map<String, BigDecimal> rates;
 
 	public FiatTicker() {
