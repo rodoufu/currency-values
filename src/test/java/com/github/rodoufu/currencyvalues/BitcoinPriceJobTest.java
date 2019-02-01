@@ -29,7 +29,6 @@ import com.github.rodoufu.currencyvalues.entity.BitcoinPrice;
 import com.github.rodoufu.currencyvalues.job.BitcoinPriceJob;
 
 @RunWith(SpringRunner.class)
-//@DataJpaTest
 @SpringBootTest
 public class BitcoinPriceJobTest {
 	@Autowired
@@ -95,11 +94,11 @@ public class BitcoinPriceJobTest {
 		// Just changing the Map implementation because in this case I want to keep the order the elements are inserted.
 		fiatTicker.setRates(new LinkedHashMap<>());
 		fiatTicker.getRates().put("BRL", new BigDecimal(1));
-		fiatTicker.getRates().put("USD", new BigDecimal(.25));
+		fiatTicker.getRates().put("USD", new BigDecimal(1.0/3.0));
 		when(tickerData.getFiatTicker()).thenReturn(CompletableFuture.completedFuture(fiatTicker));
 
 		final CryptoTicker cryptoTicker = new CryptoTicker();
-		cryptoTicker.setBuy(new BigDecimal(2000));
+		cryptoTicker.setBuy(new BigDecimal(3000));
 		when(tickerData.getCryptoTicker()).thenReturn(CompletableFuture.completedFuture(cryptoTicker));
 
 		when(bitcoinPriceJob.calculateBitcoinPrice(cryptoTicker, fiatTicker)).thenCallRealMethod();
@@ -111,8 +110,8 @@ public class BitcoinPriceJobTest {
 		Assert.assertNotNull(top10bitcoinPrice);
 		Assert.assertEquals(2, top10bitcoinPrice.size());
 		// Descending order
-		Assert.assertTrue(new BigDecimal(500).subtract(top10bitcoinPrice.get(0).getValue()).compareTo(error) < 0);
-		Assert.assertTrue(new BigDecimal(2000).subtract(top10bitcoinPrice.get(1).getValue()).compareTo(error) < 0);
+		Assert.assertTrue(new BigDecimal(1000).subtract(top10bitcoinPrice.get(0).getValue()).compareTo(error) < 0);
+		Assert.assertTrue(new BigDecimal(3000).subtract(top10bitcoinPrice.get(1).getValue()).compareTo(error) < 0);
 	}
 
 }
