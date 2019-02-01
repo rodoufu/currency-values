@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 
 /**
+ * Bitcoin quotation from Negociecoins exchange, values in BRL.
  * https://broker.negociecoins.com.br/api/v3/btcbrl/ticker
- * @author rodoufu
  */
 public class CryptoTicker {
 	private BigDecimal buy;
