@@ -22,7 +22,7 @@ public class MainController {
 	@ResponseBody
 	@RequestMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Iterable<BitcoinPrice> index() {
-		return bitcoinPriceDAO.findTop10ByOrderByDateDesc();
+		return bitcoinPriceDAO.findTop10ByOrderByIdDesc();
 	}
 
 }

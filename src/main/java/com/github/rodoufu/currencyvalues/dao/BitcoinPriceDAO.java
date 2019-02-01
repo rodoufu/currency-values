@@ -12,8 +12,8 @@ import java.util.List;
  */
 @Repository
 public interface BitcoinPriceDAO extends CrudRepository<BitcoinPrice, Long> {
-    /**
-     * @return The top 10 Bitcoin prices.
-     */
+    /** The top 10 Bitcoin prices by date. */
     List<BitcoinPrice> findTop10ByOrderByDateDesc();
+    /** The top 10 Bitcoin prices by Id, use primary key index. */
+    List<BitcoinPrice> findTop10ByOrderByIdDesc();
 }
