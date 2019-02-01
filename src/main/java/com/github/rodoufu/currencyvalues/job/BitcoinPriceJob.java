@@ -11,35 +11,62 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+/**
+ * Retrieves the data of biticoin and fiat currencies, then calculate the price of biticoin on every fiat currency.
+ */
 @Component
 public class BitcoinPriceJob {
-	@Autowired
-	private BitcoinPriceDAO bitcoinPriceDAO;
-	@Autowired
-	private TickerData getDataJob;
+    @Autowired
+    private BitcoinPriceDAO bitcoinPriceDAO;
+    @Autowired
+    private TickerData getDataJob;
 
-//	@Scheduled(fixedDelayString = "${student.job.interval}")
-	public void scheduleFixedRateTask() throws RestClientException, URISyntaxException, InterruptedException {
-		final Future<FiatTicker> fiatTicker = getDataJob.getFiatTicker();
-		final Future<CryptoTicker> cryptoTicker = getDataJob.getCryptoTicker();
-	}
+    /**
+     * Job to calculate the bitcoin prices and save the data.
+     * @throws RestClientException Problem reaching the REST service.
+     * @throws URISyntaxException Malformed URL.
+     * @throws InterruptedException Problem interrupting the thread.
+     * @throws ExecutionException Problem obtaining the values from the futures.
+     */
+    @Scheduled(fixedDelayString = "${bitcoin.price.job.interval}")
+    public void scheduleFixedRateTask() throws RestClientException, URISyntaxException, InterruptedException, ExecutionException {
+        final CompletableFuture<FiatTicker> fiatTickerFuture = getDataJob.getFiatTicker();
+        final CompletableFuture<CryptoTicker> cryptoTickerFuture = getDataJob.getCryptoTicker();
 
-	public List<BitcoinPrice> calculateBitcoinPrice(CryptoTicker cryptoTicker, FiatTicker fiatTicker) {
-		final Calendar dateNow = Calendar.getInstance();
-		return fiatTicker.getRates().entrySet().stream()
-			.map(entry -> new BitcoinPrice(entry.getKey(), cryptoTicker.getBuy().multiply(entry.getValue()), dateNow))
-			.collect(Collectors.toList());
-	}
+        CompletableFuture.allOf(fiatTickerFuture, cryptoTickerFuture).join();
 
-	@Transactional
-	public void saveBitcoinPrice(List<BitcoinPrice> bitcoinPrices) {
-		bitcoinPrices.forEach(bitcoinPrice -> bitcoinPriceDAO.save(bitcoinPrice));
-	}
+        saveBitcoinPrice(calculateBitcoinPrice(cryptoTickerFuture.get(), fiatTickerFuture.get()));
+    }
+
+    /**
+     * Generate a list of biticoin prices for a crypto and fiat tickers.
+     * @param cryptoTicker Crypto ticker.
+     * @param fiatTicker Fiat ticker.
+     * @return The list.
+     */
+    public List<BitcoinPrice> calculateBitcoinPrice(CryptoTicker cryptoTicker, FiatTicker fiatTicker) {
+        final Calendar dateNow = Calendar.getInstance();
+        final BigDecimal buyValue = cryptoTicker.getBuy();
+        return fiatTicker.getRates().entrySet().stream()
+                .map(entry -> new BitcoinPrice(entry.getKey(), buyValue.multiply(entry.getValue()), dateNow))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Saves the bitcoin prices in the database.
+     * @param bitcoinPrices Bitcoin prices.
+     */
+    @Transactional
+    public void saveBitcoinPrice(List<BitcoinPrice> bitcoinPrices) {
+        bitcoinPrices.forEach(bitcoinPrice -> bitcoinPriceDAO.save(bitcoinPrice));
+    }
 
 }
