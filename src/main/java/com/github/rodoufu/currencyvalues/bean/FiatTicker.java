@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Currencies quotation at the moment.
+ * Fiat currency is a no crypto currency, a regular currency.
  * https://api.exchangeratesapi.io/latest
- * @author rodoufu
  */
 public class FiatTicker {
 	private String base;

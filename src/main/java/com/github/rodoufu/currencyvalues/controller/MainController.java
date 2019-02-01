@@ -8,11 +8,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Application main controller.
+ */
 @Controller
 public class MainController {
 	@Autowired
 	private BitcoinPriceDAO bitcoinPriceDAO;
 
+	/**
+	 * @return The top 10 Bitcoin prices.
+	 */
 	@ResponseBody
 	@RequestMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Iterable<BitcoinPrice> index() {
