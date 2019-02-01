@@ -2,6 +2,7 @@ package com.github.rodoufu.currencyvalues.bean;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,6 +13,10 @@ public class FiatTicker {
 	private String base;
 	private Calendar date;
 	private Map<String, BigDecimal> rates;
+
+	public FiatTicker() {
+		setRates(new HashMap<>());
+	}
 
 	public String getBase() {
 		return base;
