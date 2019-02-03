@@ -17,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestClientException;
 
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -46,7 +45,7 @@ public class BitcoinPriceJobTest {
 	}
 
 	@Test
-	public void emptyFiatPricesJob() throws URISyntaxException, RestClientException, InterruptedException, ExecutionException {
+	public void emptyFiatPricesJob() throws RestClientException, InterruptedException, ExecutionException {
 		final FiatTicker fiatTicker = new FiatTicker();
 		when(tickerData.getFiatTicker()).thenReturn(CompletableFuture.completedFuture(fiatTicker));
 

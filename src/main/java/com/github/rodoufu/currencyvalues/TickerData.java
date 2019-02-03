@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URISyntaxException;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -24,8 +23,8 @@ public class TickerData {
     @Value("${ticker.url.fiat}")
     private String fiatTickerUrl;
 
-    private RestTemplate restTemplate;
-    private HttpEntity<String> httpEntity;
+    private final RestTemplate restTemplate;
+    private final HttpEntity<String> httpEntity;
 
     @Autowired
     public TickerData(RestTemplate restTemplate, HttpEntity<String> httpEntity) {
@@ -37,7 +36,6 @@ public class TickerData {
      * Get the data asynchronously.
      *
      * @return The Crypto Ticker information.
-     * @throws URISyntaxException Malformed URL.
      */
     @Async
     public CompletableFuture<CryptoTicker> getCryptoTicker() {
@@ -49,7 +47,6 @@ public class TickerData {
      * Get the data asynchronously.
      *
      * @return The Fiat Ticker information.
-     * @throws URISyntaxException Malformed URL.
      */
     @Async
     public CompletableFuture<FiatTicker> getFiatTicker() {

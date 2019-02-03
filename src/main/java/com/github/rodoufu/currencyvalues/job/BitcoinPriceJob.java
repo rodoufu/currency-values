@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
  */
 @Component
 public class BitcoinPriceJob {
-    private BitcoinPriceDAO bitcoinPriceDAO;
-    private TickerData tickerData;
+    private final BitcoinPriceDAO bitcoinPriceDAO;
+    private final TickerData tickerData;
 
     @Autowired
     public BitcoinPriceJob(BitcoinPriceDAO bitcoinPriceDAO, TickerData tickerData) {

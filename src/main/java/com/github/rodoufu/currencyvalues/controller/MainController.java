@@ -15,7 +15,7 @@ import java.util.Collection;
  */
 @Controller
 public class MainController {
-	private BitcoinPriceDAO bitcoinPriceDAO;
+	private final BitcoinPriceDAO bitcoinPriceDAO;
 
 	@Autowired
 	public MainController(BitcoinPriceDAO bitcoinPriceDAO)  {
