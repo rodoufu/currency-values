@@ -108,8 +108,8 @@ public class MainControllerTest {
 		Assert.assertTrue(new BigDecimal(2000).subtract(bitcoinPrices.get(3).getValue()).compareTo(error) < 0);
 		Assert.assertTrue(new BigDecimal(6000).subtract(bitcoinPrices.get(4).getValue()).compareTo(error) < 0);
 		Assert.assertTrue(new BigDecimal(8000).subtract(bitcoinPrices.get(5).getValue()).compareTo(error) < 0);
-		Assert.assertTrue(new BigDecimal(12000).subtract(bitcoinPrices.get(6).getValue()).compareTo(error) < 0);
-		Assert.assertTrue(new BigDecimal(100000).subtract(bitcoinPrices.get(7).getValue()).compareTo(error) < 0);
+		Assert.assertTrue(new BigDecimal(100000).subtract(bitcoinPrices.get(6).getValue()).compareTo(error) < 0);
+		Assert.assertTrue(new BigDecimal(800).subtract(bitcoinPrices.get(7).getValue()).compareTo(error) < 0);
 		Assert.assertTrue(new BigDecimal(1000).subtract(bitcoinPrices.get(8).getValue()).compareTo(error) < 0);
 		Assert.assertTrue(new BigDecimal(4000).subtract(bitcoinPrices.get(9).getValue()).compareTo(error) < 0);
 	}
