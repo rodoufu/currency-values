@@ -17,13 +17,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
  */
 @Configuration
 @EnableAsync
-@EnableScheduling
-public class ApplicationConfig implements SchedulingConfigurer {
-	@Value("${scheduled.task.pool.size}")
-	private Integer scheduledTaskPoolSize;
-	@Value("${scheduled.task.thread.prefix}")
-	private String scheduledTaskThreadPrefix;
-
+public class ApplicationConfig {
 	@Value("${async.executor.pool.size.core}")
 	private Integer asyncExecutorPoolSizeCore;
 	@Value("${async.executor.pool.size.max}")
@@ -32,19 +26,6 @@ public class ApplicationConfig implements SchedulingConfigurer {
 	private Integer asyncExecutorPoolQueueCapacity;
 	@Value("${async.executor.thread.prefix}")
 	private String asyncExecutorThreadPrefix;
-
-	/**
-	 * Configure the scheduled task thread pool.
-	 * @param scheduledTaskRegistrar The ScheduledTaskRegistrar.
-	 */
-	@Override
-	public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-		final ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-		threadPoolTaskScheduler.setPoolSize(scheduledTaskPoolSize);
-		threadPoolTaskScheduler.setThreadNamePrefix(scheduledTaskThreadPrefix);
-		threadPoolTaskScheduler.initialize();
-		scheduledTaskRegistrar.setTaskScheduler(threadPoolTaskScheduler);
-	}
 
 	/**
 	 * Configures the async task thread pool.
