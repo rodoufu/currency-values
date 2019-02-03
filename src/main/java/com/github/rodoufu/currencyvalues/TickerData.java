@@ -1,8 +1,7 @@
 package com.github.rodoufu.currencyvalues;
 
-import java.net.URISyntaxException;
-import java.util.concurrent.CompletableFuture;
-
+import com.github.rodoufu.currencyvalues.bean.CryptoTicker;
+import com.github.rodoufu.currencyvalues.bean.FiatTicker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -12,8 +11,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.github.rodoufu.currencyvalues.bean.CryptoTicker;
-import com.github.rodoufu.currencyvalues.bean.FiatTicker;
+import java.net.URISyntaxException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Get ticker data for Crypto and Fiat currencies.

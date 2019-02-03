@@ -12,7 +12,6 @@ import org.springframework.web.client.RestClientException;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;

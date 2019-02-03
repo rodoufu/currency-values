@@ -1,13 +1,8 @@
 package com.github.rodoufu.currencyvalues.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Calendar;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
 
 /**
  * Bitcoin price in a specific currency at a specific time.
